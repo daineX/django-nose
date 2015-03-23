@@ -121,7 +121,11 @@ def tables_used_by_fixtures(fixture_labels, using=DEFAULT_DB_ALIAS):
                             objects = serializers.deserialize(format, fixture, using=using)
                             for obj in objects:
                                 objects_in_fixture += 1
-                                if router.allow_syncdb(using, obj.object.__class__):
+                                if hasattr(router, 'allow_syncdb'):
+                                    model_migratable = router.allow_syncdb
+                                else:
+                                    model_migratable = router.allow_migrate
+                                if model_migratable(using, obj.object.__class__):
                                     loaded_objects_in_fixture += 1
                                     tables.add(
                                         obj.object.__class__._meta.db_table)
