@@ -144,6 +144,8 @@ def tables_used_by_fixtures(fixture_labels, using=DEFAULT_DB_ALIAS):
                                 if router.allow_syncdb(using, cls):
                                     loaded_objects_in_fixture += 1
                                     tables.add(cls._meta.db_table)
+                                    for m2m in cls._meta.many_to_many:
+                                        tables.add(m2m.m2m_db_table())
                             loaded_object_count += loaded_objects_in_fixture
                             fixture_object_count += objects_in_fixture
                             label_found = True
